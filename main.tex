@@ -319,15 +319,31 @@ with qua.stream_processing():
 
 % Within each iteration, the Measurement exposes a set of hook methods that are delegated recursively through the full hierarchy of SubSequence and ReadSequence objects. These hooks are \texttt{declare\_variables, before\_sweeps, before\_sequence, sequence}, and \texttt{after\_sequence}, and each is invoked at a semantically distinct point in the program. This staged structure gives every component in the hierarchy the ability to place code at the appropriate location. For instance, classical arithmetic that is independent of the quantum state, such as precomputing pulse parameters, can be placed in \texttt{before\_sequence} so that it does not consume coherence time during the core pulse sequence. Finally, all GettableParameter objects registered by AbstractReadout instances across the hierarchy are automatically wired into the stream processing block of the QUA program, so that acquired data is routed to the correct hardware buffers and made available to the QCoDeS data acquisition pipeline without any additional user intervention.
 
-arbok-driver exposes four main capabilities to the user. Measurements are constructed by composing SubSequence and ReadSequence objects into a hierarchy, either programmatically or from a nested dictionary, and device-specific behavior is fully determined by the configuration passed at construction time. Once instantiated, all tunable parameters across the hierarchy are registered as QCoDeS parameters and can be swept, logged, and updated through the standard QCoDeS interface. For protocols that require conditional execution, such as heralding or repeat-until-success state preparation, sub-sequences can register step requirements that gate data acquisition and sequence execution at runtime without modifying the program structure. Finally, the GenericTuningInterface enables adaptive measurements by streaming new parameter values to the FPGA between sequence iterations, allowing optimizers or feedback algorithms to interact with the hardware through a high-level parameter dictionary without direct access to the underlying program.
+The design choices described in the previous section give rise to a measurement lifecycle with five distinct stages: build, adapt, compile, run, and interact.
 
-The QUA program generated from a given sub-sequence hierarchy follows a fixed structure detailed in Listing~\ref{lst:qua_program}, structured around a synchronization loop that suspends execution between iterations until explicitly resumed by the driver. Within each iteration, every sub-sequence in the hierarchy can place logic at semantically distinct points in the program through a set of hook methods, for example to separate classical pre-computation from the core pulse sequence, or to handle post-processing after readout. This staged structure ensures that timing-critical operations are isolated from classical overhead, making efficient use of the available coherence time.
+\textbf{Build.}
+A measurement is constructed declaratively by composing SubSequence and ReadSequence objects into a hierarchy, either programmatically or from a nested dictionary (see Listing~\ref{lst:cpmg}). Device-specific behavior is fully determined by the configuration passed at construction time, so the same sequence definition can be reused across different devices without modification. At the end of this stage, all tunable parameters across the hierarchy are validated and registered as QCoDeS parameters on the ArbokDriver instrument.
+
+\textbf{Adapt.}
+Before compilation, users interact with the measurement through the standard QCoDeS interface: parameters can be updated, swept, or logged without touching the underlying sequence code. Because the parameter interface is generated dynamically from the hierarchy, it always reflects the exact structure of the current measurement.
+
+\textbf{Compile.}
+The sequence hierarchy is traversed to generate a QUA program following the fixed template shown in Listing~\ref{lst:qua_program}. Each sub-sequence places logic at semantically distinct hook points within the program, separating classical pre-computation from the timing-critical core pulse sequence. All registered GettableParameter objects are automatically wired into the stream processing block, routing acquired data to hardware buffers without additional user intervention.
+
+\textbf{Run.}
+The compiled program executes on the FPGA within a synchronization loop that suspends execution between iterations until explicitly resumed by the driver. This loop is central to the framework's flexibility: it allows the host to update parameters, evaluate runtime conditions, and trigger data retrieval between successive repetitions without recompilation.
+
+\textbf{Interact.}
+During execution, the synchronization loop enables two advanced capabilities. Sub-sequences can register step requirements that gate data acquisition and conditionally skip sequence sections at runtime, supporting heralding and repeat-until-success protocols. Additionally, the GenericTuningInterface streams new parameter values to the FPGA between iterations, enabling adaptive measurements driven by optimizers or feedback algorithms. Both mechanisms operate within the existing program structure and require no modification to the sequence definition.
+
+Concrete examples of each stage are presented in Section~\ref{sec:examples}.
 
 
 \subsection{Sample code snippets analysis (optional)}
 
 % ================================================
 \section{Illustrative examples}
+\label{sec:examples}
 \begin{instructions}
     \textit{Provide at least one illustrative example to demonstrate the major
     functions of your software/code.}
