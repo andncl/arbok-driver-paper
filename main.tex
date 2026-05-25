@@ -272,7 +272,7 @@ This recursive composition enables scalable sequence design without sacrificing 
 
 Readouts are handled by a dedicated ReadSequence class, which inherits from SubSequence and can appear at any point within a measurement, including multiple times across the sequence hierarchy, accommodating experimental protocols that require mid-sequence or repeated readout \cite{jones_mid-circuit_2026}.
 Each ReadSequence manages one or more Signal objects and a corresponding set of AbstractReadout instances, both of which are defined through the readouts configuration and therefore reflect the specific physical layout and readout channels of the device under study.
-This means the readout structure is not fixed in the software but adapts to each experimental setup, with different devices exposing a different set of signals and readout handlers. Therfore, the structure of read and sub sequences does not need to change between devices, only the configuration.
+This means the readout structure is not fixed in the software but adapts to each experimental setup, with different devices exposing a different set of signals and readout handlers. Therefore, the structure of read and sub sequences does not need to change between devices, only the configuration.
 The AbstractReadout instances are hardware-specific handlers, quantified by that same configuration, that interface with the physical acquisition channels of the FPGA platform, and each exposes its outputs through a set of GettableParameter objects (subclassing qcodes Parameter), representing measurable quantities returned by the hardware, such as demodulated quadratures or integrated voltages.
 This allows readout data to flow naturally into the QCoDeS data acquisition pipeline, enabling seamless integration with existing sweep and logging infrastructure.
 
@@ -323,9 +323,6 @@ arbok-driver exposes four main capabilities to the user. Measurements are constr
 
 The QUA program generated from a given sub-sequence hierarchy follows a fixed structure detailed in Listing~\ref{lst:qua_program}, structured around a synchronization loop that suspends execution between iterations until explicitly resumed by the driver. Within each iteration, every sub-sequence in the hierarchy can place logic at semantically distinct points in the program through a set of hook methods, for example to separate classical pre-computation from the core pulse sequence, or to handle post-processing after readout. This staged structure ensures that timing-critical operations are isolated from classical overhead, making efficient use of the available coherence time.
 
-
-\subsection{Sample code snippets analysis (optional)}
-
 % ================================================
 \section{Illustrative examples}
 \begin{instructions}
@@ -365,8 +362,7 @@ In the eight-qubit experiment~\cite{nickl_eight-qubit_2025}, the same routine wa
 
 \begin{figure}[]
 \begin{lstlisting}[
-    caption={Pseudo QUA program showing how arbok-driver synchronizes 
-    the control hardware with the driver},
+    caption={Quantum dot electron stability map measurement creation and configuration for two and eight qubits via different configurations},
     label={lst:stability_map},
 ]
 from arbok_driver.examples.sub_sequences import StabilityMap
@@ -389,7 +385,7 @@ stability_meas.run_measurement()
 \end{lstlisting}
 \end{figure}
 
-Listing~\ref{lst:stability_map} shows the measurement instantiation for both cases. The only difference between the two-qubit and eight-qubit measurement is the configuration dictionairy passed at construction time on line 12. All downstream behavior, including the structure of the QUA program, the number of active readout channels, and the parameter interface exposed to the user, is determined automatically from that configuration. The sequence program for two qubits, structured according to the template in Listing~\ref{lst:qua_program}, is generated identically in both cases and can be seen in Listing \ref{lst:qua_stability_map} while the QUA output generated from the 8 qubit configuration is shown in the documentation (Tut.~1.5) \cite{arbok_docs}. 
+Listing~\ref{lst:stability_map} shows the measurement instantiation for both cases. The only difference between the two-qubit and eight-qubit measurement is the configuration dictionary passed at construction time on line 12. All downstream behavior, including the structure of the QUA program, the number of active readout channels, and the parameter interface exposed to the user, is determined automatically from that configuration. The sequence program for two qubits, structured according to the template in Listing~\ref{lst:qua_program}, is generated identically in both cases and can be seen in Listing \ref{lst:qua_stability_map} while the QUA output generated from the 8 qubit configuration is shown in the documentation (Tut.~1.5) \cite{arbok_docs}. 
 
 The two different programs illustrate concretely how the framework translates a single high-level sub-sequence definition into hardware programs of different complexity, with the number of active channels, declared variables, and stream processing targets scaling automatically with the device configuration. This demonstrates that arbok-driver achieves its scalability not by requiring the user to maintain multiple versions of a sequence, but by encoding device-specific details exclusively in the configuration while keeping the experimental logic fully general.
 
@@ -399,7 +395,7 @@ For measurements that are run routinely across different devices or experimental
 
 \begin{figure}[t]
 \begin{lstlisting}[
-    caption={Setting up a CPMG measurement manually via a dictionairy and via a pre-defined experiment},
+    caption={Setting up a CPMG measurement manually via a dictionary and via a pre-defined experiment},
     label={lst:cpmg},
 ]
 from arbok_driver.examples.experiments import CpmgExperiment
