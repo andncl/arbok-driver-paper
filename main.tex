@@ -22,7 +22,6 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{float}
-\setlength{\parindent}{0pt}
 
 
 % ---------- configure listings -------------
@@ -335,7 +334,6 @@ The compiled program executes on the FPGA within a synchronization loop that sus
 
 \textbf{Interact.}
 Between iterations, acquired data is streamed to the host for live inspection and visualization without interrupting execution. Optionally, two advanced capabilities can be configured on top of this synchronization loop. Sub-sequences can register step requirements that gate data acquisition and conditionally skip sequence sections at runtime, supporting heralding and repeat-until-success protocols. The GenericTuningInterface enables adaptive measurements by streaming new parameter values back to the FPGA between iterations, allowing optimizers or feedback algorithms to drive the measurement. Both mechanisms operate within the existing program structure and require no modification to the sequence definition.
-
 Concrete examples of each stage are presented in Section~\ref{sec:examples}.
 
 % ================================================
