@@ -159,10 +159,10 @@ quantum measurements \sep FPGA \sep measurement framework \sep scaling qubits \s
 
 \section*{Highlights}
 \begin{itemize}
-\item Dynamically generated QCoDeS instrument interface tailored to each measurement at build time.
-\item Modular, device-agnostic measurement sequences scale via declarative configurations.
-\item Synchronization loop enables live parameter updates and adaptive feedback without FPGA recompilation.
-\item Asynchronous step requirements support heralding and repeat-until-success protocols natively.
+\item Dynamically generated QCoDeS instrument interface tailored to each measurement.
+\item Modular, device-agnostic sequences scale via declarative configurations.
+\item Synchronization loop enables live parameter updates and adaptive feedback.
+\item Asynchronous step requirements support heralding and repeat-until-success.
 \item Validated with \SI{300}{mm} foundry-fabricated silicon spin qubit devices.
 \end{itemize}
 
@@ -225,7 +225,7 @@ This allows all relevant parameters, such as wait times, voltages, and frequenci
 
 While a future fault-tolerant quantum computer will require embedded cryogenic control hardware\cite{patra_cryo-cmos_2018, hornibrook_cryogenic_2015, xue_cmos-based_2021}, quantum measurements on processors at the scale of tens to hundreds of qubits can still be performed using room-temperature control systems across a wide range of platforms. In this regime, flexible and scalable software abstractions remain essential regardless of the underlying qubit modality.
 
-arbok-driver has been implemented to interface with the Quantum Machines OPX+ and OPX1000 platforms, and while the current implementation targets their QUA programming language~\cite{qua}, it goes beyond vendor-native abstraction layers such as QUAM~\cite{quam} by integrating established instrumentation stacks via QCoDeS and supporting advanced runtime features including asynchronous conditional execution and adaptive parameter streaming. The underlying design principles of modular sequence composition and dynamic parameter exposure are applicable to any setting in which FPGA-based control hardware is used, including superconducting qubits, trapped ions, NV centers, and quantum sensing platforms.
+arbok-driver has been implemented to interface with the Quantum Machines OPX+ and OPX1000 platforms, targeting their QUA programming language~\cite{qua}. Compared to vendor-native abstraction layers such as QUAM~\cite{quam}, it integrates established instrumentation stacks via QCoDeS and supports advanced runtime features including asynchronous conditional execution and adaptive parameter streaming. The underlying design principles of modular sequence composition and dynamic parameter exposure are applicable to any setting in which FPGA-based control hardware is used, including superconducting qubits, trapped ions, NV centers, and quantum sensing platforms.
 
 % While a future fault-tolerant quantum computer will likely require embedded cryogenic control hardware to overcome the overhead associated with electrical interconnects, quantum measurements on processors at the scale of tens to hundreds of qubits can still be performed using room-temperature control systems across a wide range of platforms. In this regime, flexible and scalable software abstractions remain essential regardless of the underlying qubit modality. By combining dynamic abstraction with a modular and fully parameterized sequence design, arbok-driver enables the scalable development of complex measurement routines while remaining compatible with standard laboratory instrumentation. This facilitates integration into existing workflows and provides a flexible foundation for advanced applications such as automated tuning, adaptive measurements, and real-time feedback.
 
@@ -254,7 +254,7 @@ A Device object encapsulates the physical characteristics of the quantum device 
     \centering
     \includegraphics[width=0.4\textwidth]{arbok_block_diagram.pdf}
     \caption{
-        Block diagram of the arbok-driver
+        Block diagram of the arbok-driver architecture showing the relationship between the ArbokDriver instrument, sequence hierarchy, and device configuration
     }
     \label{fig:block_diagram}
 \end{figure}
@@ -414,7 +414,7 @@ The two different programs illustrate concretely how the framework translates a 
 \subsection{Defining complex measurements}
 \noindent
 As experimental routines grow in complexity, a measurement can quickly accumulate a large number of sub-sequences with interdependent parameters. Rather than adding these components individually, arbok-driver allows an entire sequence hierarchy to be defined through a nested dictionary, where each entry specifies a sub-sequence class, optional keyword arguments, and any further nested sub-sequences. Listing~\ref{lst:cpmg} shows this approach for a CPMG pulse sequence, a standard dynamical decoupling protocol used to characterise qubit coherence \cite{hahn_spin_1950, carr_effects_1954, naydenov_dynamical_2011}. The dictionary encodes the full structure of the measurement, from initialization through spin control to readout, and is passed to \texttt{add\_subsequences\_from\_dict} to construct the hierarchy in a single call.
-For measurements that are run routinely across different devices or experimental configurations, arbok-driver provides the Experiment class as a higher-level blueprint. An Experiment object captures the invariant structure of a measurement while an arbitrarily amount of device-specific components, in this case the initialization and readout configurations, as required arguments. As shown in the lower half of Listing~\ref{lst:cpmg}, the identical CPMG measurement can be constructed from the CpmgExperiment blueprint by providing only those two components, with all internal sequence structure defined by the blueprint itself. This pattern standardizes frequently used measurements across a group or project, reducing the risk of inconsistencies between runs and making it straightforward for new users to deploy established routines on a new device.
+For measurements that are run routinely across different devices or experimental configurations, arbok-driver provides the Experiment class as a higher-level blueprint. An Experiment object captures the invariant structure of a measurement while taking an arbitrary number of device-specific components, in this case the initialization and readout configurations, as required arguments. As shown in the lower half of Listing~\ref{lst:cpmg}, the identical CPMG measurement can be constructed from the CpmgExperiment blueprint by providing only those two components, with all internal sequence structure defined by the blueprint itself. This pattern standardizes frequently used measurements across a group or project, reducing the risk of inconsistencies between runs and making it straightforward for new users to deploy established routines on a new device.
 
 \begin{figure}[t]
 \begin{lstlisting}[
@@ -533,7 +533,7 @@ The framework is particularly well suited to the intermediate scale of tens to h
 
 \section*{Acknowledgements}
 \noindent
-We thank E. Vahapoglu, S. Serrano, M. Candidio, S. Apicella, F. Dalmagioni and H. Vallabhapurapu for user feedback and feature suggestions, and S. Bartee and A. Klopper for feedback on the manuscript. We also acknowledge P. Steinacker, W. Dumoulin Stuyck, and W. Gilbert for helpful discussions and explanations of previously used measurement techniques.
+We thank E. Vahapoglu, S. Serrano, M. Candidio, S. Apicella, F. Dalmagioni, H. Vallabhapurapu and T. Botzem for user feedback and feature suggestions, and S. Bartee and A. Klopper for feedback on the manuscript. We also acknowledge P. Steinacker, W. Dumoulin Stuyck, and W. Gilbert for helpful discussions and explanations of previously used measurement techniques.
 
 \section*{Funding sources}
 \noindent
@@ -551,9 +551,6 @@ A.N. declares no competing interests.
 \noindent
 During the preparation of this work the authors used Claude (Anthropic) in order to assist with writing the software documentation, including tutorials and developer guides hosted alongside the package. The source code of arbok-driver was written entirely without AI assistance. The authors reviewed and edited all AI-assisted content and take full responsibility for the content of the published article.
 
-\section*{Acknowledgements}
-\noindent
-We thank E. Vahapoglu, S. Serrano, M. Candidio, S. Apicella, F. Dalmagioni, H. Vallabhapurapu and T. Botzem for user feedback and feature suggestions, and S. Bartee and A. Klopper for feedback on the manuscript. We also acknowledge P. Steinacker, W. Dumoulin Stuyck, and W. Gilbert for helpful discussions and explanations of previously used measurement techniques.
 
 \bibliography{select_references}
 
