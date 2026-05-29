@@ -217,10 +217,13 @@ High-fidelity control and readout in qubit experiments place stringent requireme
 
 Programming FPGA-based control systems for quantum experiments is inherently challenging, as it requires precise handling of timing, synchronization, and low-level hardware constraints. Although most instrument manufacturers provide high-level abstraction layers that allow users to define experiments without directly writing hardware code, developing measurement routines remains difficult in practice. Experimental sequences often involve deeply nested logic, a large number of interdependent parameters, and the need to coordinate hardware-level timing with higher-level experimental workflows. As system complexity increases, maintaining flexibility, scalability, and reproducibility becomes increasingly challenging.
 
-To address the challenges outlined above, the arbok-driver package was developed as a dynamically generated instrument driver for FPGA-based control hardware.
+To address the challenges outlined above, the arbok-driver package was developed as a dynamically generated instrument driver that produces executable FPGA code from high-level Python definitions.
+In a typical experimental setting, the user operates from a room-temperature control PC connected to the FPGA hardware. Measurement sequences are defined in Python by composing modular building blocks, while device-specific parameters are supplied through configuration files.
 In contrast to conventional static instrument drivers, where available parameters are fixed at design time, arbok-driver constructs the instrument interface explicitly for each measurement and generates the respective sequence program in a parameterized fashion.
-This allows all relevant parameters, such as wait times, voltages, and frequencies, to be automatically exposed to the user through a familiar interface, without requiring direct interaction with the FPGA code itself.
+This allows all relevant parameters, such as wait times, voltages, and frequencies, to be automatically exposed to the user through a familiar interface, without requiring direct interaction with the generated FPGA code itself.
+The workflow enables rapid iteration on experimental protocols and lowers the barrier to entry for new team members.
 It supports advanced runtime features including asynchronous conditional execution and adaptive parameter streaming.
+The framework has already contributed to experimental results at scale, supporting the tuning and coherent control of an eight-qubit linear array in a foundry-compatible process~\cite{nickl_eight-qubit_2025} and enabling device pre-screening that contributed to single- and two-qubit gate fidelities exceeding 99\%~\cite{steinacker_industry-compatible_2025}.
 
 arbok-driver is integrated into QCoDeS, a Python-based framework for instrument control and data acquisition in experimental physics, developed by Microsoft's quantum computing consortium \cite{qcodes_website}.
 QCoDeS provides a standardized interface for implementing and using instrument drivers, enabling arbok-driver to operate alongside other instruments within a shared measurement environment.
