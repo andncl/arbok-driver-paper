@@ -16,11 +16,11 @@ The framework fundamentally changes the workflow of experimentalists: the role s
 
 ## Scientific impact
 
-arbok-driver has directly contributed to two recent high-impact publications. It supported the tuning and coherent control of an eight-qubit linear array fabricated in a 300 mm CMOS-compatible foundry process — the largest number of individually controlled silicon SiMOS spin qubits reported to date in an industrially fabricated platform (Nickl et al., *Nature Communications*, 2025; accepted with editorial revisions). It also enabled device pre-screening from the same foundry process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99% (Steinacker et al., *Nature* **646**, 81–87, 2025). These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
+arbok-driver has directly contributed to two recent high-impact publications. It supported the tuning and coherent control of an eight-qubit linear array fabricated in a 300 mm CMOS-compatible foundry process, the largest number of individually controlled silicon SiMOS spin qubits reported to date in an industrially fabricated platform (Nickl et al., *Nature Communications*, 2025; accepted with editorial revisions). It also enabled device pre-screening from the same foundry process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99% (Steinacker et al., *Nature* **646**, 81–87, 2025). These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
 
 ## Adoption and reusability
 
-The framework has been adopted at Diraq, a silicon quantum computing startup, where it is currently deployed across six independent measurement campaigns spanning mass device characterisation, qubit array scale-up, benchmarking, novel architectures, and automated tuning with machine learning protocols. The package is open-source (MIT license), installable via standard Python tooling, and includes comprehensive documentation with tutorials. Its modular design and hardware-agnostic principles make it reusable across any setting in which FPGA-based control hardware is employed, including superconducting qubits, trapped ions, NV centers, and quantum sensing platforms.
+The framework has been adopted at Diraq, a silicon quantum computing startup, where it is currently deployed across six independent measurement campaigns spanning mass device characterisation, qubit array scale-up, qubit benchmarking, novel qubit architectures (singlet-triplet/ exchange only), and automated tuning with machine learning protocols. The package is open-source (MIT license), installable via standard Python tooling, and includes comprehensive documentation with tutorials. Currently implemented for the Quantum Machines OPX platform, the underlying design principles of modular sequence composition, dynamic parameter exposure, and device-agnostic configuration are transferable to other FPGA backends. Notably, research groups and companies across the quantum computing community face the same challenge of building and maintaining custom measurement codebases, often duplicating significant engineering effort independently. By providing a reusable, well-documented framework, arbok-driver reduces this redundancy and offers a foundation that others can adopt or extend rather than rebuilding from scratch.
 
 ## Relevance to SoftwareX
 
@@ -28,7 +28,17 @@ We believe this manuscript is well suited to SoftwareX because it describes a re
 
 ## Suggested reviewers
 
-[To be completed]
+1. **Julian M. Bopp**, Humboldt-Universität zu Berlin, Germany
+   First author of DynExp, a Python-based laboratory automation framework for dynamically changing quantum experiments. Directly familiar with the challenges of building modular experiment automation software.
+
+2. **Rodolfo Carobene**, Università Milano Bicocca, Italy
+   Lead developer of Qibosoq, an open-source Python framework for quantum circuit programming on RFSoC FPGAs. Has hands-on experience building the same class of abstraction layer over FPGA hardware.
+
+3. **Sara Sussman**, Fermi National Accelerator Laboratory, USA
+   PhD thesis on open-source qubit control software (QICK). Understands the challenges of building reusable quantum measurement frameworks from both a developer and user perspective.
+
+4. **Andrea Pasquale**, University of Milan, Italy
+   First author of Qibocal, open-source software for characterization and calibration of quantum processors. Experienced with the full measurement stack from hardware drivers to automated calibration routines.
 
 ---
 
