@@ -5,7 +5,14 @@
 \usepackage[utf8]{inputenc}
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\labelenumi}{[\theenumi]}
 \usepackage{microtype}
+
+\newcommand{\separator}{%
+  \par\vspace{0.1em}
+  \noindent\rule{\textwidth}{0.2pt}
+  \vspace{0.1em}
+}
 
 % The `letter` class has no \paragraph/\section; define a run-in heading.
 \newcommand{\heading}[1]{\par\medskip\noindent\textbf{#1}\quad\ignorespaces}
@@ -18,25 +25,28 @@
 
 \begin{document}
 
-\begin{letter}{The Editors \\ SoftwareX}
+\begin{letter}{\textbf{Letter to the Editor - SoftwareX}}
 
 \opening{Dear Editors,}
 
 We would like you to consider our submission -- \emph{``arbok-driver: A modular and parameterized Python framework for FPGA-based quantum measurement routines''} -- for publication in SoftwareX.
-
+% \separator
 \heading{Background.}
 
-FPGA-based arbitrary waveform generators are central to the control and readout of qubit experiments, enabling deterministic, low-latency execution of complex pulse sequences. Although most instrument manufacturers provide high-level abstraction layers, developing scalable and maintainable measurement routines remains difficult in practice due to deeply nested logic, large numbers of interdependent parameters, and the need to coordinate hardware-level timing with higher-level experimental workflows. As qubit systems scale from few-qubit demonstrations toward arrays of tens to hundreds of qubits, the lack of flexible and reproducible measurement software becomes a critical bottleneck.
+FPGA-based arbitrary waveform generators are central to the control and readout of qubit experiments, enabling deterministic, low-latency execution of complex pulse sequences [1,2,3]. Although most instrument manufacturers provide high-level abstraction layers, developing scalable and maintainable measurement routines remains difficult in practice due to deeply nested logic, large numbers of interdependent parameters, and the need to coordinate hardware-level timing with higher-level experimental workflows. As qubit systems scale from few-qubit demonstrations toward arrays of tens to hundreds of qubits, the lack of flexible and reproducible measurement software becomes a critical bottleneck.
 
 \heading{Main contribution.}
 
-Our manuscript presents arbok-driver, an open-source Python package that dynamically generates a fully parameterized instrument interface for FPGA-based quantum measurements. Rather than requiring users to write or maintain low-level FPGA code, arbok-driver constructs executable hardware programs from modular, composable Python building blocks and device-specific configurations. All relevant pulse sequence parameters are automatically exposed through the QCoDeS instrumentation framework, enabling seamless integration with existing laboratory infrastructure.
+Our manuscript presents arbok-driver, an open-source Python package that dynamically generates a fully parameterized instrument interface for FPGA-based quantum measurements. Rather than requiring users to write or maintain low-level FPGA code, arbok-driver constructs executable hardware programs from modular, composable Python building blocks and device-specific configurations. All relevant pulse sequence parameters are automatically exposed through the established QCoDeS instrumentation framework, enabling seamless integration with existing laboratory infrastructure.
 
-The framework fundamentally changes the workflow of experimentalists: the role shifts from hardware programmer to measurement designer, where the focus is on defining the physics of the experiment rather than managing timing constraints and register-level details. New users can begin acquiring data within minutes by reusing existing sequence components, and measurements are guaranteed to execute identically regardless of which setup or operator runs them.
+The framework fundamentally changes the workflow of experimentalists by shifting the role from hardware programmer to measurement designer, where the focus is on defining the physics of the experiment rather than managing timing constraints and register-level details. New users can begin acquiring data within minutes by reusing existing sequence components, and measurements are guaranteed to execute identically regardless of which setup or operator runs them.
 
 \heading{Scientific impact.}
 
-arbok-driver has directly contributed to two recent high-impact publications. It supported the tuning and coherent control of an eight-qubit linear array fabricated in a 300\,mm CMOS-compatible foundry process, the largest number of individually controlled silicon SiMOS spin qubits reported to date in an industrially fabricated platform (Nickl et al., \emph{Nature Communications}, 2025; accepted with editorial revisions). It also enabled device pre-screening from the same foundry process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99\% (Steinacker et al., \emph{Nature} \textbf{646}, 81--87, 2025). These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
+arbok-driver has directly contributed to two recent high-impact publications.
+It supported the tuning and coherent control of an eight-qubit linear array fabricated in a 300\,mm CMOS-compatible foundry process, the largest number of individually controlled silicon SiMOS spin qubits reported to date in an industrially fabricated platform (Nickl et al., \emph{Nature Communications} \textbf{17}, 5878 (2026)) [4].
+It also enabled device pre-screening from the same foundry process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99\% (Steinacker et al., \emph{Nature} \textbf{646}, 81--87, 2025) [5].
+These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
 
 \heading{Adoption and reusability.}
 
@@ -60,5 +70,41 @@ Thank you, in advance, for your consideration of our manuscript.
 \closing{Yours sincerely,}
 
 \end{letter}
+\newpage
+
+\vspace{1em}
+\noindent\textbf{References}
+
+\begin{enumerate}
+\item Stefanazzi, L., Treptow, K., Wilcer, N., Stoughton, C.,
+Bradford, C., Uemura, S., Zorzetti, S., Montella, S.,
+Cancelo, G., Sussman, S., Houck, A., Saxena, S.,
+Arnaldi, H., Agrawal, A., Zhang, H., Ding, C., Schuster, D.I.
+The QICK (Quantum Instrumentation Control Kit): Readout and
+control for qubits and detectors.
+\emph{Review of Scientific Instruments} \textbf{93}(4),
+044709 (2022).
+
+\item Xu, Y., Huang, G., Balewski, J., Naik, R., Morvan, A.,
+Mitchell, B., Nowrouzi, K., Santiago, D.I., Siddiqi, I.
+QubiC: An Open-Source FPGA-Based Control and Measurement
+System for Superconducting Quantum Information Processors.
+\emph{IEEE Transactions on Quantum Engineering} \textbf{2},
+1--11 (2021).
+doi:10.1109/TQE.2021.3116540.
+
+\item Qin, X., Zhang, W., Wang, L., Zhao, Y., Tong, Y.,
+Rong, X., Du, J.
+An FPGA-Based Hardware Platform for the Control of Spin-Based
+Quantum Systems.
+
+\item Nickl, A., Dumoulin Stuyck, N., Steinacker, P. et al.
+Eight-qubit operation of a 300\,mm SiMOS foundry-fabricated device.
+\emph{Nature Communications} \textbf{17}, 5878 (2026).
+
+\item Steinacker, P., Dumoulin Stuyck, N., Lim, W.H. et al.
+Industry-compatible silicon spin-qubit unit cells exceeding 99\% fidelity.
+\emph{Nature} \textbf{646}, 81--87 (2025).
+\end{enumerate}
 
 \end{document}
