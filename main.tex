@@ -5,6 +5,7 @@
 
 \usepackage[scaled]{helvet}
 \renewcommand{\familydefault}{\sfdefault}
+\setlength{\columnsep}{8mm}
 
 \bibliographystyle{elsarticle-num}
 % \usepackage[numbers]{natbib}
@@ -22,6 +23,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage{lineno}
+
 
 
 % ---------- configure listings -------------
@@ -118,8 +121,11 @@
 \author[unsw]{A. Nickl\corref{cor1}}
 \ead{a.nickl@unsw.edu.au}
 % \ead[url]{https://github.com/andncl/arbok_drive}
+\author[unsw,diraq]{S. Serrano}
+\author[unsw,diraq]{E. Vahapoglu}
+\author[unsw,diraq]{M. Flax}
 \author[unsw,diraq]{A. Laucht}
-\author[unsw,diraq]{A. Dzurak}
+\author[unsw,diraq]{A. S. Dzurak}
 \author[unsw,diraq]{T. Tanttu}
 
 \cortext[cor1]{Corresponding author}
@@ -130,13 +136,13 @@
 
 \begin{abstract}
 %% Text of abstract 
-\textit{
+    \noindent
     Field-programmable gate array (FPGA)-based arbitrary waveform generators are central to the control and readout of semiconductor spin qubit experiments, enabling deterministic and low-latency execution of complex pulse sequences.
     Despite the availability of high-level programming interfaces, developing scalable and maintainable measurement routines remains challenging due to the complexity of experimental logic and the large number of interdependent parameters.
     This work presents arbok-driver, a Python package that provides a dynamically generated instrument within Microsoft's QCoDeS framework for interacting with FPGA-based measurements.
     Measurement routines are defined through modular, composable and device agnostic building blocks, enabling flexible construction of complex sequences while maintaining reproducibility and scalability through device specific configurations. Relevant pulse sequence parameters are exposed to the user without requiring interaction with low-level code.
     The framework integrates with standard laboratory instrumentation, supports real-time parameter updates without recompilation, and enables adaptive measurements and feedback-based protocols.
-}
+
 
 \end{abstract}
 
@@ -163,22 +169,22 @@ quantum measurements \sep FPGA \sep measurement framework \sep scaling qubits \s
 \item Modular, device-agnostic sequences scale via declarative configurations.
 \item Synchronization loop enables live parameter updates and adaptive feedback.
 \item Asynchronous step requirements support heralding and repeat-until-success.
-\item Validated with \SI{300}{mm} foundry-fabricated silicon spin qubit devices.
+\item Validated with \SI{300}{\milli\meter} foundry-fabricated silicon spin qubit devices.
 \end{itemize}
 
 \section*{Metadata}
-\label{}
+\label{tab:metadata}
 \begin{table}[H]
     \centering
     \begin{tabular}{|l|p{6.5cm}|p{6.5cm}|}
         \hline
         \textbf{Nr.} & \textbf{Code metadata description} & \textbf{Metadata} \\
         \hline
-        C1 & Current code version & v2.6.0 \\
+        C1 & Current code version & v2.6.1 \\
         \hline
-        C2 & Permanent link to code/repository used for this code version & \url{https://github.com/andncl/arbok_driver} \\
+        C2 & Permanent link to code/repository used for this code version & \url{https://github.com/andncl/arbok_driver/tree/v2.6.1} \\
         \hline
-        C3 & Permanent link to Reproducible Capsule & \url{https://github.com/andncl/arbok_driver/blob/master/pyproject.toml}\\
+        C3 & Permanent link to Reproducible Capsule & \url{https://github.com/andncl/arbok_driver/blob/v2.6.1/pyproject.toml}\\
         \hline
         C4 & Legal Code License & MIT License \\
         \hline
@@ -186,9 +192,9 @@ quantum measurements \sep FPGA \sep measurement framework \sep scaling qubits \s
         \hline
         C6 & Software code languages, tools, and services used & python\\
         \hline
-        C7 & Compilation requirements, operating environments \& dependencies & \url{https://github.com/andncl/arbok_driver/blob/master/pyproject.toml} \\
+        C7 & Compilation requirements, operating environments \& dependencies & \url{https://github.com/andncl/arbok_driver/blob/v2.6.1/pyproject.toml} \\
         \hline
-        C8 & If available Link to developer documentation/manual & \url{https://github.com/andncl/arbok_driver/tree/master/docs}, \url{https://arbok-driver.readthedocs.io/en/latest/index.html} \\
+        C8 & If available Link to developer documentation/manual & \url{https://github.com/andncl/arbok_driver/tree/v2.6.1/docs}, \url{https://arbok-driver.readthedocs.io/en/v2.6.1/} \\
         \hline
         C9 & Support email for questions & a.nickl@unsw.edu.au\\
         \hline
@@ -200,7 +206,7 @@ quantum measurements \sep FPGA \sep measurement framework \sep scaling qubits \s
 % =============================================
 \clearpage
 \twocolumn
-
+\linenumbers
 \section{Motivation and significance}
 \begin{instructions}
     \textit{In this section, we want you to introduce the scientific background and the motivation for developing the software.}
@@ -239,7 +245,7 @@ While a future fault-tolerant quantum computer will require embedded cryogenic c
 \end{instructions}
 \noindent
 The arbok-driver framework is structured around a hierarchical composition model that separates experimental logic from hardware interaction, while remaining fully integrated within the QCoDeS instrumentation ecosystem.
-A schematic overview of the architecture is shown in Fig. \ref{fig:block_diagram}.
+A schematic overview of the architecture is shown in Fig.~\ref{fig:block_diagram}.
 At the top level, the ArbokDriver class acts as a QCoDeS Instrument and serves as the central interface between the user and the underlying FPGA hardware.
 It operates alongside other QCoDeS compatible instruments, such as DC and AC sources, which are managed independently but coordinate with the driver within a shared measurement environment.
 A Device object encapsulates the physical characteristics of the quantum device under study, providing parameter definitions that are relevant across different experiments.
@@ -291,7 +297,7 @@ Together, these design choices, namely hierarchical composition via native QCoDe
 \begin{figure}[t]
 \begin{lstlisting}[
     caption={Pseudo QUA program showing how arbok-driver synchronizes 
-    the control hardware with the driver while making every section of the program acessible to sub-sequences},
+    the control hardware with the driver while making every section of the program accessible to sub-sequences},
     label={lst:qua_program},
 ]
 # Register all QUA variables needed across the sequence hierarchy
@@ -343,9 +349,7 @@ Between iterations, acquired data is streamed to the host for live inspection an
 Concrete examples of each stage are presented in Section~\ref{sec:examples}.
 
 % ================================================
-\section{Illustrative examples}
-
-\label{sec:examples}
+\section{Illustrative examples}\label{sec:examples}
 \begin{instructions}
     \textit{Provide at least one illustrative example to demonstrate the major
     functions of your software/code.}
@@ -355,12 +359,12 @@ Concrete examples of each stage are presented in Section~\ref{sec:examples}.
         }
 \end{instructions}
 \noindent
-The following examples demonstrate how arbok-driver is used in practice, from initial setup through increasingly complex measurement routines. Listing~\ref{lst:initial setup} shows the minimal setup required to instantiate a device and driver object. The Device object is initialised with the hardware configuration of the FPGA platform and serves as the shared reference for all subsequent measurements. The ArbokDriver object is the top-level QCoDeS instrument through which all measurements are accessed. No sequence logic is defined at this stage. All subsequent code listings in this section are intended to be executed in succession, building on this initial setup.
+The following examples demonstrate how arbok-driver is used in practice, from initial setup through increasingly complex measurement routines. Listing~\ref{lst:initial_setup} shows the minimal setup required to instantiate a device and driver object. The Device object is initialised with the hardware configuration of the FPGA platform and serves as the shared reference for all subsequent measurements. The ArbokDriver object is the top-level QCoDeS instrument through which all measurements are accessed. No sequence logic is defined at this stage. All subsequent code listings in this section are intended to be executed in succession, building on this initial setup.
 Measurements are independent objects that can be added or removed, or exchanged at any point without affecting the driver or any other active measurement. % could be cut out
 \begin{figure}
 \begin{lstlisting}[
     caption={Initializing a Device object and using it to create an empty ArbokDriver instrument},
-    label={lst:initial setup},
+    label={lst:initial_setup},
 ]
 from arbok_driver import ArbokDriver, Device, Measurement
 from arbok_driver.examples.configurations.hardware import opx1000_config
@@ -378,7 +382,7 @@ It is one of the most fundamental and frequently repeated measurements in spin q
 Precisely because it is so ubiquitous, it provides an ideal illustration of how a single, well-defined sequence can be deployed across devices of different scales without modification.
 
 The same stability map routine was used in both published applications of arbok-driver.
-In the two-qubit device pre-screening campaign~\cite{steinacker_industry-compatible_2025}, the measurement was executed repeatedly across multiple devices from the same 300 mm foundry process.
+In the two-qubit device pre-screening campaign~\cite{steinacker_industry-compatible_2025}, the measurement was executed repeatedly across multiple devices from the same \SI{300}{\milli\meter} foundry process.
 In this context, the value of arbok-driver lies not only in the ease of setup but in reproducibility.  Since the sequence is fully defined in code and all parameters are registered as QCoDeS parameters with explicit values, each measurement run is traceable and can be reproduced exactly on a different device or at a later date without relying on manually reconfigured instrument settings.
 In the eight-qubit experiment~\cite{nickl_eight-qubit_2025}, the same routine was extended to simultaneously acquire four charge stability diagrams across all four double-dot pairs in the linear array. This required no structural changes to the sequence program itself.
 
@@ -389,11 +393,11 @@ In the eight-qubit experiment~\cite{nickl_eight-qubit_2025}, the same routine wa
 ]
 from arbok_driver.examples.sub_sequences import StabilityMap
 from arbok_driver.examples.configurations.sequence import stability_map_8q_conf, stability_map_2q_conf
+import numpy as np
 
 stability_meas = Measurement(my_driver, 'stability_meas')
 # only change between the 2- and 8-qubit configuration:
-stability_map = StabilityMap(
-    stability_meas, 'stability_map', stability_map_2q_conf) # stability_map_8q_conf
+stability_map = StabilityMap(stability_meas, 'stability_map', stability_map_2q_conf) # stability_map_8q_conf
 
 detuning_range = j_range = np.arange(-0.1, 0.1, 0.01)
 stability_meas.set_sweeps(
@@ -407,7 +411,7 @@ stability_meas.run_measurement()
 \end{lstlisting}
 \end{figure}
 
-Listing~\ref{lst:stability_map} shows the measurement instantiation for both cases. The only difference between the two-qubit and eight-qubit measurement is the configuration dictionary passed at construction time on line 12. All downstream behavior, including the structure of the QUA program, the number of active readout channels, and the parameter interface exposed to the user, is determined automatically from that configuration. The sequence program for two qubits, structured according to the template in Listing~\ref{lst:qua_program}, is generated identically in both cases and can be seen in Listing \ref{lst:qua_stability_map} while the QUA output generated from the 8 qubit configuration is shown in the documentation (Tut.~1.5) \cite{arbok_docs}. 
+Listing~\ref{lst:stability_map} shows the measurement instantiation for both cases. The only difference between the two-qubit and eight-qubit measurement is the configuration dictionary passed at construction time on line 7. All downstream behavior, including the structure of the QUA program, the number of active readout channels, and the parameter interface exposed to the user, is determined automatically from that configuration. The sequence program for two qubits, structured according to the template in Listing~\ref{lst:qua_program}, is generated identically in both cases and can be seen in Listing~\ref{lst:qua_stability_map} while the QUA output generated from the 8 qubit configuration is shown in the documentation (Tut.~1)~\cite{arbok_docs}. 
 
 The two different programs illustrate concretely how the framework translates a single high-level sub-sequence definition into hardware programs of different complexity, with the number of active channels, declared variables, and stream processing targets scaling automatically with the device configuration. This demonstrates that arbok-driver achieves its scalability not by requiring the user to maintain multiple versions of a sequence, but by encoding device-specific details exclusively in the configuration while keeping the experimental logic fully general.
 
@@ -514,7 +518,7 @@ The \texttt{control\_detuning} variable moves both plunger gates in opposite dir
 \noindent
 The arbok-driver framework fundamentally changes how experimentalists interact with FPGA-based control hardware. Rather than writing, debugging, and maintaining low-level pulse sequence code for each new experiment, users compose measurements from modular Python building blocks and supply device-specific configurations. This shifts the experimentalist's role from hardware programmer to measurement designer: the focus moves from managing timing constraints and register-level details to defining the physics of the experiment. Since all relevant pulse sequence parameters are automatically exposed through the QCoDeS interface, new team members can develop and run measurement routines without requiring direct knowledge of the underlying FPGA programming language. In practice, new users can install the package and begin acquiring data within tens of minutes by reusing existing sub-sequences and experiment blueprints, rather than writing measurement routines from scratch. Because sequence definitions and configurations are shared across projects, measurements are guaranteed to execute identically regardless of which setup or operator runs them. This reproducibility is particularly valuable in growing research teams where engineers with varying levels of hardware expertise need to contribute to complex measurement workflows.
 
-The framework has been adopted internally at Diraq a silicon quantum computing startup and its associated research group at the University of New South Wales, where it is currently deployed across six independent measurement campaigns spanning mass device characterization, qubit array scale-up, benchmarking, novel qubit architectures, and automated tuning with machine learning protocols. It contributed to the tuning and coherent control of an eight-qubit linear array fabricated in a 300 mm CMOS-compatible foundry process, the largest number of qubits reported to date in this platform~\cite{nickl_eight-qubit_2025}, and supported device pre-screening from the same process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99\%~\cite{steinacker_industry-compatible_2025}. These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
+The framework has been adopted internally at Diraq a silicon quantum computing startup and its associated research group at the University of New South Wales, where it is currently deployed across six independent measurement campaigns spanning mass device characterization, qubit array scale-up, benchmarking, novel qubit architectures, and automated tuning with machine learning protocols. It contributed to the tuning and coherent control of an eight-qubit linear array fabricated in a \SI{300}{\milli\meter} CMOS-compatible foundry process, the largest number of qubits reported to date in this platform~\cite{nickl_eight-qubit_2025}, and supported device pre-screening from the same process, contributing to the demonstration of single- and two-qubit gate fidelities exceeding 99\%~\cite{steinacker_industry-compatible_2025}. These results demonstrate that flexible, reproducible control software is a prerequisite for translating high-fidelity qubit performance from academic settings to industry-compatible fabrication processes.
 
 By decoupling experimental logic from hardware-specific implementation, arbok-driver opens pathways to research questions that are difficult to pursue with conventional measurement software. Its modular architecture scales naturally to larger qubit arrays, where the combinatorial growth of control parameters and calibration routines would otherwise make manual sequence management intractable. The framework's support for adaptive feedback protocols and conditional execution enables exploration of error correction schemes, real-time state classification, and closed-loop tuning strategies at scales beyond what static measurement routines can support. Furthermore, because the design principles are hardware-agnostic, the framework can be extended to other qubit platforms — including superconducting circuits, trapped ions, and NV centers — enabling cross-platform comparison of measurement protocols and facilitating the transfer of experimental techniques between research groups working on different physical implementations.
 
@@ -528,7 +532,7 @@ The framework is particularly well suited to the intermediate scale of tens to h
 \noindent
 \textbf{Andreas Nickl}: Conceptualization, Data curation, Formal analysis, Investigation, Methodology, Resources, Software, Validation, Visualization, Writing – original draft.
 \textbf{Arne Laucht}: Funding acquisition, Supervision, Writing – review and editing.
-\textbf{Andrew Dzurak}: Funding acquisition, Supervision.
+\textbf{Andrew S. Dzurak}: Funding acquisition, Supervision.
 \textbf{Tuomo Tanttu}: Funding acquisition, Supervision, Writing – review and editing, Validation.
 
 \section*{Acknowledgements}
@@ -541,7 +545,7 @@ We acknowledge support from
 the Australian Research Council (Grant No. FL190100167) and the U.S. Army Research Office
 (W911NF-23-10092). A.N. acknowledges support from the Sydney Quantum Academy.
 
-\section*{Competing Interests}
+\section*{Declaration of competing interest}
 \noindent 
 A.S.D. is chief executive officer and a director of Diraq Pty Ltd.
 T.T. and A.L. declare equity interest in Diraq.
@@ -562,7 +566,7 @@ During the preparation of this work the authors used Claude (Anthropic) in order
 \section{QUA outputs}
 \begin{figure}[H]
 \begin{lstlisting}[
-    caption={Output of the stability map measurement for a two qubit system defined in listing \ref{lst:stability_map}. An extended version of the measurement for 8 qubits can be found in tutorial 1 of the documentation \cite{arbok_docs}},
+    caption={Output of the stability map measurement for a two qubit system defined in listing \ref{lst:stability_map}. An extended version of the measurement for 8 qubits can be found in Tut. 1 of the documentation \cite{arbok_docs}},
     label={lst:qua_stability_map},
 ]
 from qm.qua import *
